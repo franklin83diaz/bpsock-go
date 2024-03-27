@@ -1,20 +1,9 @@
 package bpsock
 
 import (
+	"bpsock/tags"
 	"net"
 )
-
-// Tag16
-type Tag16 struct {
-	name string
-}
-
-func (t Tag16) New(s string) {
-	if len(s) > 16 {
-		panic("Tag16: tag name too long")
-	}
-	t.name = s
-}
 
 // Bpsock
 type Bpsock struct {
@@ -30,7 +19,7 @@ func (bpsock *Bpsock) New(socket net.Conn, dmtu ...int) {
 	bpsock.socket = socket
 }
 
-func (bpsock *Bpsock) send(data []byte, tag Tag16) error {
+func (bpsock *Bpsock) send(data []byte, tag tags.Tag16) error {
 	// !TODO
 	//lock up channel if it is busy
 	//icrement channel counter
