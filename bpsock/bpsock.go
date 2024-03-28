@@ -1,7 +1,7 @@
 package bpsock
 
 import (
-	"bpsock/tags"
+	"bpsock-go/tags"
 	"net"
 )
 
