@@ -12,6 +12,10 @@ func NewTag16(s string) Tag16 {
 	return Tag16{name: s}
 }
 
+func (t Tag16) Name() string {
+	return t.name
+}
+
 // Tag8
 type Tag8 struct {
 	name string

@@ -1,6 +1,7 @@
-package tags
+package tags_test
 
 import (
+	. "bpsock-go/tags"
 	"reflect"
 	"testing"
 )
@@ -15,8 +16,8 @@ func TestNewTag16(t *testing.T) {
 		want Tag16
 	}{
 		// test cases.
-		{"TestNewTag16", args{"TestNewTag16"}, Tag16{"TestNewTag16"}},
-		{"TestNewTag16", args{"1234567890123456"}, Tag16{"1234567890123456"}},
+		{"TestNewTag16", args{"TestNewTag16"}, NewTag16("TestNewTag16")},
+		{"TestNewTag16", args{"1234567890123456"}, NewTag16("1234567890123456")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -38,8 +39,8 @@ func TestNewTag8(t *testing.T) {
 		want Tag8
 	}{
 		// test cases.
-		{"TestNewTag8", args{"NewTag8"}, Tag8{"NewTag8"}},
-		{"TestNewTag8", args{"12345678"}, Tag8{"12345678"}},
+		{"TestNewTag8", args{"NewTag8"}, NewTag8("NewTag8")},
+		{"TestNewTag8", args{"12345678"}, NewTag8("12345678")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
