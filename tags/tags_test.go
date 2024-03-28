@@ -14,7 +14,7 @@ func TestNewTag16(t *testing.T) {
 		args args
 		want Tag16
 	}{
-		// TODO: Add test cases.
+		// test cases.
 		{"TestNewTag16", args{"TestNewTag16"}, Tag16{"TestNewTag16"}},
 		{"TestNewTag16", args{"1234567890123456"}, Tag16{"1234567890123456"}},
 	}
@@ -37,7 +37,7 @@ func TestNewTag8(t *testing.T) {
 		args args
 		want Tag8
 	}{
-		// TODO: Add test cases.
+		// test cases.
 		{"TestNewTag8", args{"NewTag8"}, Tag8{"NewTag8"}},
 		{"TestNewTag8", args{"12345678"}, Tag8{"12345678"}},
 	}

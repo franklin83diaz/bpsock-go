@@ -20,7 +20,7 @@ func (bpsock *Bpsock) New(socket net.Conn, dmtu ...int) {
 }
 
 func (bpsock *Bpsock) send(data []byte, tag tags.Tag16) error {
-	// !TODO
+	// !TODO:
 	//lock up channel if it is busy
 	//icrement channel counter
 
