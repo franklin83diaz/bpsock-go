@@ -14,11 +14,25 @@ type BpSock struct {
 	id_chan  int
 }
 
+// Create a new BpSock object
+// socket: the socket to use
+// dmtu: the maximum size of the data to send
+//
+//	     (default is 15000000)
+//		     dmtu max is 15000000
+//
+// return: a new BpSock object
 func NewBpSock(socket net.Conn, dmtu ...int) *BpSock {
 
+	// set the default dmtu
 	defaultDmtu := 15000000
 	if len(dmtu) > 0 {
 		defaultDmtu = dmtu[0]
+	}
+
+	// check if the dmtu is greater than the maximum size
+	if len(dmtu) > 15000000 {
+		panic("the DMTU exceeds the maximum size of 15,000,000 bytes.")
 	}
 
 	return &BpSock{
