@@ -43,11 +43,13 @@ func NewBpSock(socket net.Conn, dmtu ...int) *BpSock {
 }
 
 func (bpsock *BpSock) send(data []byte, tag Tag16) error {
-	// !TODO:
-	//lock up channel if it is busy
-	//icrement channel counter
 
-	//sendData(data, tag.name, _idChannel, bpsock.socket, bpsock.dmtu);
+	//icrement channel count
+	bpsock.id_chan++
+
+	//TODO: put send data in a goroutine
+
+	SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
 
 	return nil
 }
