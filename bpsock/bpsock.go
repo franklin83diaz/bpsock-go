@@ -3,6 +3,7 @@ package bpsock
 import (
 	. "bpsock-go/handler"
 	. "bpsock-go/tags"
+	"fmt"
 	"net"
 )
 
@@ -42,7 +43,7 @@ func NewBpSock(socket net.Conn, dmtu ...int) *BpSock {
 
 }
 
-func (bpsock *BpSock) send(data []byte, tag Tag16) error {
+func (bpsock *BpSock) Send(data []byte, tag Tag16) error {
 
 	//icrement channel count
 	bpsock.id_chan++
@@ -52,4 +53,27 @@ func (bpsock *BpSock) send(data []byte, tag Tag16) error {
 	SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
 
 	return nil
+}
+
+func (bpsock *BpSock) AddHandler(handler Handler) {
+	bpsock.handlers = append(bpsock.handlers, handler)
+}
+
+func (bpsock *BpSock) Received() {
+
+	buffer := make([]byte, 1024)
+	for {
+		// Read data
+		bytesRead, err := bpsock.socket.Read(buffer)
+		if err != nil {
+			fmt.Println("Error reading data: ", err)
+			break
+		}
+		b := buffer[:bytesRead]
+
+		lenBytes := b[0:2]
+		letInt := int(lenBytes[0])<<8 | int(lenBytes[1])
+		fmt.Println("lenInt: ", letInt)
+
+	}
 }

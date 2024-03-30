@@ -15,14 +15,14 @@ func main() {
 		fmt.Println("Error connecting to server: ", err)
 		return
 	}
+	defer socket.Close()
 
-	// Create a new BpSock object
+	//Create a new BpSock object
 	bpsock := NewBpSock(socket)
 
-	// Create a new tag
+	//Create a new tag
 	tag := NewTag16("Login")
 
-	fmt.Println(bpsock)
-	fmt.Println(tag)
+	bpsock.Send([]byte("Hello, server!"), tag)
 
 }
