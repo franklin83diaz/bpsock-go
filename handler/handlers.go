@@ -33,9 +33,9 @@ func (h *HookHandler) Data() map[int][]byte {
 }
 
 // HookHandler
-func NewHookHandler(tag Tag16, actionFunc ActionFunc) *HookHandler {
+func NewHookHandler(tag Tag16, actionFunc ActionFunc) HookHandler {
 
-	return &HookHandler{
+	return HookHandler{
 		tag:        tag,
 		actionFunc: actionFunc,
 		cancel:     make(chan string),
