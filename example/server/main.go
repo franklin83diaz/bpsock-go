@@ -47,8 +47,6 @@ func main() {
 
 		bpsock.AddHandler(&login)
 
-		bpsock.Received()
-
 		// buffer := make([]byte, 1024)
 		// for {
 		// 	// Read data
