@@ -3,6 +3,7 @@ package bpsock
 import (
 	. "bpsock-go/handler"
 	. "bpsock-go/tags"
+	. "bpsock-go/utils"
 	"fmt"
 	"net"
 )
@@ -55,8 +56,22 @@ func (bpsock *BpSock) Send(data []byte, tag Tag16) error {
 	return nil
 }
 
-func (bpsock *BpSock) AddHandler(handler Handler) {
+// Add a handler to the BpSock object
+func (bpsock *BpSock) AddHandler(handler Handler) error {
+	//check if the handler tag is already in the list
+	for i := 0; i < len(bpsock.handlers); i++ {
+		if bpsock.handlers[i].Tag().Name() == handler.Tag().Name() {
+			return fmt.Errorf("The tag %s is already in the list", handler.Tag().Name())
+		}
+	}
+
 	bpsock.handlers = append(bpsock.handlers, handler)
+	return nil
+}
+
+// Get list of handlers
+func (bpsock *BpSock) GetHandlers() []Handler {
+	return bpsock.handlers
 }
 
 func (bpsock *BpSock) Received() {
@@ -71,9 +86,33 @@ func (bpsock *BpSock) Received() {
 		}
 		b := buffer[:bytesRead]
 
-		lenBytes := b[0:2]
-		letInt := int(lenBytes[0])<<8 | int(lenBytes[1])
-		fmt.Println("lenInt: ", letInt)
+		idBytes := b[0:2]
+		idChan := int(idBytes[0])<<8 | int(idBytes[1])
+		//	fmt.Println("ID Chan: ", idChan)
+
+		tagBytes := b[2:18]
+		tagName := BytesToStringTrimNull(tagBytes)
+
+		//	fmt.Println("Tag Name: ", tagName)
+
+		sizeDataBytes := b[18:22]
+		sizeData := int(sizeDataBytes[0])<<24 | int(sizeDataBytes[1])<<16 | int(sizeDataBytes[2])<<8 | int(sizeDataBytes[3])
+		//	fmt.Println("Size Data: ", sizeData)
+
+		data := b[22 : sizeData+22]
+		//fmt.Println("Data: ", data)
+		//fmt.Println("Data string: ", string(data))
+
+		listHandlers := bpsock.handlers
+		for i := 0; i < len(listHandlers); i++ {
+			fmt.Println("Handler: ", listHandlers[i].Tag().Name(), " - Tag: ", tagName)
+			if listHandlers[i].Tag().Name() == tagName {
+
+				action := listHandlers[i].ActionFunc()
+				action(listHandlers[i], string(data), idChan)
+
+			}
+		}
 
 	}
 }

@@ -9,7 +9,6 @@ import (
 
 func TestHookHandler_New(t *testing.T) {
 	//actionFunc
-	//var actionFunc ActionFunc
 	actionFunc := func(a Handler, b string, c int) {
 		fmt.Println("actionFunc")
 	}
