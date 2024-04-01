@@ -40,10 +40,13 @@ func NewBpSock(socket net.Conn, dmtu ...int) *BpSock {
 		panic("the DMTU exceeds the maximum size of 15,000,000 bytes.")
 	}
 
-	return &BpSock{
+	bpSock := &BpSock{
 		socket: socket,
 		dmtu:   defaultDmtu,
 	}
+
+	go bpSock.received()
+	return bpSock
 
 }
 
@@ -91,7 +94,7 @@ func (bpsock *BpSock) GetHandlers() []Handler {
 	return bpsock.handlers
 }
 
-func (bpsock *BpSock) Received() {
+func (bpsock *BpSock) received() {
 
 	buffer := make([]byte, 1024)
 	for {

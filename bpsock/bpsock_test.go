@@ -148,13 +148,13 @@ func server(ch chan string) {
 	defer ln.Close()
 
 	bpsock := NewBpSock(socke)
+
 	tagLogin := NewTag16("Login")
 
 	actionLogin := func(h Handler, s string, i int) {
 		ch <- s
+		close(ch)
 	}
 	login := NewHookHandler(tagLogin, actionLogin)
 	bpsock.AddHandler(&login)
-	bpsock.Received()
-	close(ch)
 }
