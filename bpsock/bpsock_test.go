@@ -4,9 +4,11 @@ import (
 	. "bpsock-go/bpsock"
 	. "bpsock-go/handler"
 	. "bpsock-go/tags"
+	"fmt"
 	"net"
 	"reflect"
 	"testing"
+	"time"
 )
 
 // Test NewBpSock
@@ -80,4 +82,79 @@ func TestBpSock_AddHandler(t *testing.T) {
 
 		})
 	}
+}
+
+// send data
+func TestBpSock_Send(t *testing.T) {
+
+	ch := make(chan string)
+
+	go server(ch)
+	time.Sleep(100 * time.Millisecond)
+
+	type args struct {
+		data []byte
+		tag  Tag16
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{"TestSend", args{[]byte("test-send"), NewTag16("Login")}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			socket, err := net.Dial("tcp", "localhost:8085")
+			if err != nil {
+				t.Errorf("Error connecting to server")
+				return
+			}
+			defer socket.Close()
+
+			//Create a new BpSock object
+			bpsock := NewBpSock(socket)
+
+			err = bpsock.Send([]byte("test-send"), tt.args.tag)
+
+			if err != nil {
+				t.Errorf("Send() = %v, want %v", err, nil)
+			}
+			recived := <-ch
+
+			if recived != string(tt.args.data) {
+				t.Errorf("Send() = %v, want %v", "test-send", recived)
+			}
+
+		})
+
+	}
+
+}
+
+func server(ch chan string) {
+	//create a new server
+	ln, err := net.Listen("tcp", ":8085")
+	if err != nil {
+		fmt.Println("Error creating server: ", err)
+		return
+	}
+
+	socke, err := ln.Accept()
+	if err != nil {
+		fmt.Println("Error accepting connection: ", err)
+		return
+	}
+	defer ln.Close()
+
+	bpsock := NewBpSock(socke)
+	tagLogin := NewTag16("Login")
+
+	actionLogin := func(h Handler, s string, i int) {
+		ch <- s
+	}
+	login := NewHookHandler(tagLogin, actionLogin)
+	bpsock.AddHandler(&login)
+	bpsock.Received()
+	close(ch)
 }

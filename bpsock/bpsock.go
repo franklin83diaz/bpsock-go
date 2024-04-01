@@ -105,7 +105,7 @@ func (bpsock *BpSock) Received() {
 
 		listHandlers := bpsock.handlers
 		for i := 0; i < len(listHandlers); i++ {
-			fmt.Println("Handler: ", listHandlers[i].Tag().Name(), " - Tag: ", tagName)
+
 			if listHandlers[i].Tag().Name() == tagName {
 
 				action := listHandlers[i].ActionFunc()
