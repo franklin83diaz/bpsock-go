@@ -23,6 +23,6 @@ func main() {
 	//Create a new tag
 	tag := NewTag16("Login")
 
-	bpsock.Send([]byte("Hello, server!"), tag)
+	bpsock.Send([]byte("hello work"), tag)
 
 }
