@@ -6,7 +6,10 @@ import (
 	. "bpsock-go/utils"
 	"fmt"
 	"net"
+	"sync"
 )
+
+var mutex sync.Mutex
 
 // Bpsock
 type BpSock struct {
@@ -46,14 +49,19 @@ func NewBpSock(socket net.Conn, dmtu ...int) *BpSock {
 
 func (bpsock *BpSock) Send(data []byte, tag Tag16) error {
 
+	//reset channel if it is 65535
+	if bpsock.id_chan == 65535 {
+		bpsock.id_chan = 0
+	}
 	//icrement channel count
+	mutex.Lock()
 	bpsock.id_chan++
-
-	//TODO: put send data in a goroutine
-
-	SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
-
-	return nil
+	mutex.Unlock()
+	ch := make(chan error)
+	go func() {
+		ch <- SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
+	}()
+	return <-ch
 }
 
 // Add a handler to the BpSock object
