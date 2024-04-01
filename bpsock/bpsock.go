@@ -76,6 +76,15 @@ func (bpsock *BpSock) Send(data []byte, tag Tag16) error {
 	return SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
 }
 
+// Close the BpSock
+// this will close the socket
+// and stop the received function
+func (bpsock *BpSock) Close() {
+	//Close the socket
+	//when the socket is closed, the received function will stop
+	bpsock.socket.Close()
+}
+
 // Add a handler to the BpSock object
 func (bpsock *BpSock) AddHandler(handler Handler) error {
 	//check if the handler tag is already in the list
