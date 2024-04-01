@@ -47,6 +47,18 @@ func NewBpSock(socket net.Conn, dmtu ...int) *BpSock {
 
 }
 
+// / Send data
+// data: the data to send
+// tag: the tag to use
+// return: error
+//
+// use
+// ```
+// go func() {
+// ch <- bpsock.Send(data, tag)
+// }()
+// ```
+// to send data
 func (bpsock *BpSock) Send(data []byte, tag Tag16) error {
 
 	//reset channel if it is 65535
@@ -57,11 +69,8 @@ func (bpsock *BpSock) Send(data []byte, tag Tag16) error {
 	mutex.Lock()
 	bpsock.id_chan++
 	mutex.Unlock()
-	ch := make(chan error)
-	go func() {
-		ch <- SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
-	}()
-	return <-ch
+
+	return SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
 }
 
 // Add a handler to the BpSock object
