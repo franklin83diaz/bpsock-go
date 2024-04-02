@@ -30,17 +30,19 @@ func main() {
 		defer socket.Close()
 
 		// Create a new BpSock object
-		bpsock := NewBpSock(socket)
+		bpsock := NewBpSock(socket, 100)
 
 		// Create a new tag
 		tagLogin := NewTag16("Login")
 
 		var actionLogin ActionFunc
 
-		actionLogin = func(h Handler, s string, i int) {
+		actionLogin = func(h Handler, tagName string, i int) {
 			fmt.Println("Action Login")
-			fmt.Println(s)
-			fmt.Println(i)
+			//fmt.Println("tag: ", tagName)
+			s := string(h.Data()[i])
+			fmt.Println(len(h.Data()))
+			fmt.Println("data: ", s)
 		}
 
 		login := NewHookHandler(tagLogin, actionLogin)

@@ -32,6 +32,16 @@ func (h *HookHandler) Data() map[int][]byte {
 	return h.data
 }
 
+// AddData
+func (h *HookHandler) AddData(i int, b []byte) {
+	currentData := h.data[i]
+	if currentData != nil {
+		h.data[i] = append(currentData, b...)
+		return
+	}
+	h.data[i] = b
+}
+
 // HookHandler
 func NewHookHandler(tag Tag16, actionFunc ActionFunc) HookHandler {
 

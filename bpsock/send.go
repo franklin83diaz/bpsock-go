@@ -3,6 +3,7 @@ package bpsock
 import (
 	. "bpsock-go/tags"
 	"net"
+	"time"
 )
 
 func SendData(data []byte, tag Tag16, id_chan int, socket net.Conn, dmtu int) error {
@@ -30,10 +31,17 @@ func SendData(data []byte, tag Tag16, id_chan int, socket net.Conn, dmtu int) er
 	if sizeData > dmtu {
 		//split the data
 		for i := 0; i < sizeData; i += dmtu {
+			time.Sleep(1 * time.Second)
 			end := i + dmtu
 			if end > sizeData {
 				end = sizeData
 			}
+			lenData := end - i - 22
+			bytesSizeData[0] = byte(lenData >> 24)
+			bytesSizeData[1] = byte(lenData >> 16)
+			bytesSizeData[2] = byte(lenData >> 8)
+			bytesSizeData[3] = byte(lenData)
+
 			unit := append(bytesId, bytesTag...)
 			unit = append(unit, bytesSizeData...)
 			unit = append(unit, data[i:end]...)

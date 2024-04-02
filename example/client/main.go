@@ -18,11 +18,11 @@ func main() {
 	defer socket.Close()
 
 	//Create a new BpSock object
-	bpsock := NewBpSock(socket)
+	bpsock := NewBpSock(socket, 100)
 
 	//Create a new tag
 	tag := NewTag16("Login")
 
-	bpsock.Send([]byte("hello work"), tag)
+	bpsock.Send([]byte("hello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello work"), tag)
 
 }

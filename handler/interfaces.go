@@ -8,4 +8,5 @@ type Handler interface {
 	ActionFunc() ActionFunc
 	Cancel() chan string
 	Data() map[int][]byte
+	AddData(i int, b []byte)
 }

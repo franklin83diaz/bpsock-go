@@ -105,40 +105,68 @@ func (bpsock *BpSock) GetHandlers() []Handler {
 
 func (bpsock *BpSock) received() {
 
-	buffer := make([]byte, 1024)
+	start := 0
+	end := 22
+	buffer := make([]byte, bpsock.dmtu)
+	var idChan int
+	var tagName string
+	var sizeData int
 	for {
 		// Read data
-		bytesRead, err := bpsock.socket.Read(buffer)
+		bytesRead, err := bpsock.socket.Read(buffer[start:end])
+		fmt.Println("bytesRead: ", bytesRead)
 		if err != nil {
 			fmt.Println("Error reading data: ", err)
 			break
 		}
-		b := buffer[:bytesRead]
 
-		idBytes := b[0:2]
-		idChan := int(idBytes[0])<<8 | int(idBytes[1])
-		//	fmt.Println("ID Chan: ", idChan)
+		sizeUnit := bytesRead
 
-		tagBytes := b[2:18]
-		tagName := BytesToStringTrimNull(tagBytes)
+		if start == 0 {
+			b := buffer[:bytesRead]
+			//id
+			idBytes := b[0:2]
+			idChan = int(idBytes[0])<<8 | int(idBytes[1])
 
-		//	fmt.Println("Tag Name: ", tagName)
+			//tag
+			tagBytes := b[2:18]
+			tagName = BytesToStringTrimNull(tagBytes)
 
-		sizeDataBytes := b[18:22]
-		sizeData := int(sizeDataBytes[0])<<24 | int(sizeDataBytes[1])<<16 | int(sizeDataBytes[2])<<8 | int(sizeDataBytes[3])
-		//	fmt.Println("Size Data: ", sizeData)
+			//size data
+			sizeDataBytes := b[18:22]
+			sizeData = int(sizeDataBytes[0])<<24 | int(sizeDataBytes[1])<<16 | int(sizeDataBytes[2])<<8 | int(sizeDataBytes[3])
 
-		data := b[22 : sizeData+22]
-		//fmt.Println("Data: ", data)
-		//fmt.Println("Data string: ", string(data))
+			sizeUnit = sizeData + 22
+		}
+		if sizeUnit > bytesRead {
+			start = bytesRead
+			end = sizeData
+			continue
+		}
+
+		//reset start and end
+		start = 0
+		end = 22
+
+		//if is end channel
+
+		//data
+		data := buffer[22 : sizeData+22]
 
 		listHandlers := bpsock.handlers
 		for i := 0; i < len(listHandlers); i++ {
 
 			if listHandlers[i].Tag().Name() == tagName {
-
-				action := listHandlers[i].ActionFunc()
-				action(listHandlers[i], string(data), idChan)
+				fmt.Println("tag: ", tagName)
+				fmt.Println("sizeData: ", sizeData)
+				//if sizeData is 0, then it is an end channel
+				if sizeData == 0 {
+					action := listHandlers[i].ActionFunc()
+					action(listHandlers[i], tagName, idChan)
+					continue
+				}
+				//add data to the handler
+				listHandlers[i].AddData(idChan, data)
 
 			}
 		}
