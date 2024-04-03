@@ -2,6 +2,8 @@ package bpsock
 
 import (
 	. "bpsock-go/tags"
+	"bpsock-go/utils"
+	"fmt"
 	"net"
 	"time"
 )
@@ -29,14 +31,14 @@ func SendData(data []byte, tag Tag16, id_chan int, socket net.Conn, dmtu int) er
 
 	/// if is bigger
 	if sizeData > dmtu {
-		//split the data
-		for i := 0; i < sizeData; i += dmtu {
+
+		splitData := utils.SplitData(data, dmtu)
+
+		for _, chunk := range splitData {
+			//TODO: remove this line
 			time.Sleep(1 * time.Second)
-			end := i + dmtu
-			if end > sizeData {
-				end = sizeData
-			}
-			lenData := end - i - 22
+
+			lenData := len(chunk)
 			bytesSizeData[0] = byte(lenData >> 24)
 			bytesSizeData[1] = byte(lenData >> 16)
 			bytesSizeData[2] = byte(lenData >> 8)
@@ -44,8 +46,9 @@ func SendData(data []byte, tag Tag16, id_chan int, socket net.Conn, dmtu int) er
 
 			unit := append(bytesId, bytesTag...)
 			unit = append(unit, bytesSizeData...)
-			unit = append(unit, data[i:end]...)
+			unit = append(unit, chunk...)
 
+			fmt.Println("unit: ", string(unit))
 			// send the unit
 			_, err := socket.Write(unit)
 			if err != nil {

@@ -23,6 +23,6 @@ func main() {
 	//Create a new tag
 	tag := NewTag16("Login")
 
-	bpsock.Send([]byte("hello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello workhello work"), tag)
+	bpsock.Send([]byte("1234567890 hola esto es un prueba de un string de mas de 100 runner espero haber escrito lo suficiente"), tag)
 
 }

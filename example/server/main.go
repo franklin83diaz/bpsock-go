@@ -49,21 +49,5 @@ func main() {
 
 		bpsock.AddHandler(&login)
 
-		// buffer := make([]byte, 1024)
-		// for {
-		// 	// Read data
-		// 	bytesRead, err := socket.Read(buffer)
-		// 	if err != nil {
-		// 		fmt.Println("Error reading data: ", err)
-		// 		break
-		// 	}
-		// 	b := buffer[:bytesRead]
-		// 	for i := 0; i < len(b); i++ {
-		// 		fmt.Printf("%08b\n", b[i])
-		// 	}
-		// 	fmt.Println()
-		// 	fmt.Println("Received data: ", buffer[:bytesRead])
-		// }
-
 	}
 }
