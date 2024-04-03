@@ -152,7 +152,7 @@ func server(ch chan string) {
 	tagLogin := NewTag16("Login")
 
 	actionLogin := func(h Handler, s string, i int) {
-		ch <- s
+		ch <- string(h.Data()[i])
 		close(ch)
 	}
 	login := NewHookHandler(tagLogin, actionLogin)
