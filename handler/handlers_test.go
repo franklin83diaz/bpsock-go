@@ -31,7 +31,7 @@ func TestHookHandler_New(t *testing.T) {
 	}
 
 	//reqHandler
-	reqHandler := NewReqHandler(NewTag16("tag5"), actionFunc)
+	reqHandler := NewReqHandler(NewTag8("tag5"), actionFunc)
 	var handler2 Handler = &reqHandler
 
 	if reqHandler.Tag().Name() != "tag5" {

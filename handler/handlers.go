@@ -54,13 +54,13 @@ func NewHookHandler(tag Tag16, actionFunc ActionFunc) HookHandler {
 
 // ReqHandler
 type ReqHandler struct {
-	tag        Tag16
+	tag        Tag8
 	actionFunc ActionFunc
 	cancel     chan string
 	data       map[int][]byte
 }
 
-func NewReqHandler(tag Tag16, actionFunc ActionFunc) ReqHandler {
+func NewReqHandler(tag Tag8, actionFunc ActionFunc) ReqHandler {
 
 	return ReqHandler{
 		tag:        tag,
@@ -72,7 +72,9 @@ func NewReqHandler(tag Tag16, actionFunc ActionFunc) ReqHandler {
 
 // tag
 func (h *ReqHandler) Tag() Tag16 {
-	return h.tag
+	//TODO: Implement Tag
+	//return h.tag
+	return NewTag16("tag5")
 }
 
 // ActionFunc
