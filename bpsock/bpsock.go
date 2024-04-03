@@ -107,7 +107,7 @@ func (bpsock *BpSock) received() {
 
 	start := 0
 	end := 22
-	buffer := make([]byte, bpsock.dmtu)
+	buffer := make([]byte, bpsock.dmtu+22)
 	var idChan int
 	var tagName string
 	var sizeData int
@@ -135,12 +135,13 @@ func (bpsock *BpSock) received() {
 			//size data
 			sizeDataBytes := b[18:22]
 			sizeData = int(sizeDataBytes[0])<<24 | int(sizeDataBytes[1])<<16 | int(sizeDataBytes[2])<<8 | int(sizeDataBytes[3])
+			fmt.Println("sizeData: ", sizeData)
 
-			sizeUnit = sizeData + 22
+			sizeUnit = sizeData
 		}
 		if sizeUnit > bytesRead {
 			start = bytesRead
-			end = sizeData
+			end = sizeData + 22
 			continue
 		}
 
@@ -158,7 +159,7 @@ func (bpsock *BpSock) received() {
 
 			if listHandlers[i].Tag().Name() == tagName {
 				fmt.Println("tag: ", tagName)
-				fmt.Println("sizeData: ", sizeData)
+
 				//if sizeData is 0, then it is an end channel
 				if sizeData == 0 {
 					action := listHandlers[i].ActionFunc()
