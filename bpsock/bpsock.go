@@ -176,7 +176,13 @@ func (bpsock *BpSock) received() {
 				//if sizeData is 0, then it is an end channel
 				if sizeData == 0 {
 					action := listHandlers[i].ActionFunc()
-					action(listHandlers[i], tagName, idChan)
+
+					go func() {
+						//remove data from the handler after the action is executed
+						defer listHandlers[i].RemoveData(idChan)
+						action(listHandlers[i], tagName, idChan)
+					}()
+
 					//just one handler per tag, no need to continue
 					break
 				}

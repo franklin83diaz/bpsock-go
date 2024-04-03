@@ -42,6 +42,11 @@ func (h *HookHandler) AddData(i int, b []byte) {
 	h.data[i] = b
 }
 
+// RemoveData
+func (h *HookHandler) RemoveData(i int) {
+	delete(h.data, i)
+}
+
 // HookHandler
 func NewHookHandler(tag Tag16, actionFunc ActionFunc) HookHandler {
 

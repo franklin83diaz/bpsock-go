@@ -43,6 +43,7 @@ func main() {
 			s := string(h.Data()[i])
 			fmt.Println(len(h.Data()))
 			fmt.Println("data: ", s)
+
 		}
 
 		login := NewHookHandler(tagLogin, actionLogin)

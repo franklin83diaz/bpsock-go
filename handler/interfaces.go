@@ -9,4 +9,5 @@ type Handler interface {
 	Cancel() chan string
 	Data() map[int][]byte
 	AddData(i int, b []byte)
+	RemoveData(i int)
 }
