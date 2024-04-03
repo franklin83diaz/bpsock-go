@@ -90,7 +90,7 @@ func (bpsock *BpSock) AddHandler(handler Handler) error {
 	//check if the handler tag is already in the list
 	for i := 0; i < len(bpsock.handlers); i++ {
 		if bpsock.handlers[i].Tag().Name() == handler.Tag().Name() {
-			return fmt.Errorf("The tag %s is already in the list", handler.Tag().Name())
+			return fmt.Errorf("the tag %s is already in the list", handler.Tag().Name())
 		}
 	}
 
@@ -114,8 +114,13 @@ func (bpsock *BpSock) received() {
 	for {
 		// Read data
 		bytesRead, err := bpsock.socket.Read(buffer[start:end])
-		fmt.Println("bytesRead: ", bytesRead)
+
 		if err != nil {
+			//if the error is EOF, then the socket is closed
+			// no need to print the error
+			if err.Error() == "EOF" {
+				break
+			}
 			fmt.Println("Error reading data: ", err)
 			break
 		}
@@ -135,10 +140,12 @@ func (bpsock *BpSock) received() {
 			//size data
 			sizeDataBytes := b[18:22]
 			sizeData = int(sizeDataBytes[0])<<24 | int(sizeDataBytes[1])<<16 | int(sizeDataBytes[2])<<8 | int(sizeDataBytes[3])
-			fmt.Println("sizeData: ", sizeData)
 
-			sizeUnit = sizeData
+			//sizeUnit is the size of the data plus the header
+			sizeUnit = sizeData + 22
 		}
+
+		//if the size of the data is greater than the bytes read
 		if sizeUnit > bytesRead {
 			start = bytesRead
 			end = sizeData + 22
@@ -154,20 +161,28 @@ func (bpsock *BpSock) received() {
 		//data
 		data := buffer[22 : sizeData+22]
 
+		//get the handlers
 		listHandlers := bpsock.handlers
+
+		//check if the tag is in the list of handlers
 		for i := 0; i < len(listHandlers); i++ {
 
+			//if the tag is in the list of handlers
 			if listHandlers[i].Tag().Name() == tagName {
-				fmt.Println("tag: ", tagName)
 
 				//if sizeData is 0, then it is an end channel
 				if sizeData == 0 {
 					action := listHandlers[i].ActionFunc()
 					action(listHandlers[i], tagName, idChan)
-					continue
+					//just one handler per tag, no need to continue
+					break
 				}
+
 				//add data to the handler
 				listHandlers[i].AddData(idChan, data)
+
+				//just one handler per tag, no continue to the next handler
+				break
 
 			}
 		}
