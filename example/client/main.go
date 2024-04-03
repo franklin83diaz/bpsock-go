@@ -1,7 +1,9 @@
 package main
 
 import (
+	//lint:ignore ST1001 import bpsock
 	. "bpsock-go/bpsock"
+	//lint:ignore ST1001 import tags
 	. "bpsock-go/tags"
 	"fmt"
 	"net"
@@ -11,7 +13,11 @@ import (
 func main() {
 
 	//connect to the server
+	//local testing
 	socket, err := net.Dial("tcp", "localhost:8080")
+
+	//netlab testting
+	//socket, err := net.Dial("tcp", "192.168.137.254:8080")
 	if err != nil {
 		fmt.Println("Error connecting to server: ", err)
 		return

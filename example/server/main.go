@@ -1,9 +1,11 @@
 package main
 
 import (
-	//. "bpsock-go/bpsock"
+	//lint:ignore ST1001 import bpsock
 	. "bpsock-go/bpsock"
+	//lint:ignore ST1001 import handler
 	. "bpsock-go/handler"
+	//lint:ignore ST1001 import tags
 	. "bpsock-go/tags"
 
 	"fmt"
@@ -35,9 +37,7 @@ func main() {
 		// Create a new tag
 		tagLogin := NewTag16("Login")
 
-		var actionLogin ActionFunc
-
-		actionLogin = func(h Handler, tagName string, i int) {
+		actionLogin := func(h Handler, tagName string, i int) {
 			fmt.Println("Action Login")
 			//fmt.Println("tag: ", tagName)
 			s := string(h.Data()[i])
