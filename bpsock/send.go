@@ -1,6 +1,7 @@
 package bpsock
 
 import (
+	//lint:ignore ST1001 import tags
 	. "bpsock-go/tags"
 	"bpsock-go/utils"
 	"net"
