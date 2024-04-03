@@ -6,7 +6,6 @@ import "bpsock-go/tags"
 type Handler interface {
 	Tag() tags.Tag16
 	ActionFunc() ActionFunc
-	Cancel() chan string
 	Data() map[int][]byte
 	AddData(i int, b []byte)
 	RemoveData(i int)
