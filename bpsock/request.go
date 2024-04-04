@@ -11,17 +11,17 @@ import (
 
 // Request
 func (bpsock *BpSock) Req(tag Tag8, data []byte, actionFunc ActionFunc) {
-	//create a new handler
+	// Create a new handler
 	handler := NewReqHandler(tag, actionFunc)
 	//add the handler to the list
 	bpsock.AddHandler(Handler(&handler))
 
-	//icrement channel count
+	// Increment channel count
 	mutex.Lock()
 	bpsock.id_chan++
 	mutex.Unlock()
 
-	//send request type 1
+	// Send request type 1
 	SendData(data, handler.Tag(), bpsock.id_chan, bpsock.socket, bpsock.dmtu, 1)
 
 }
@@ -31,16 +31,16 @@ func (bpsock *BpSock) CancelReq(tag Tag16, id int) error {
 	//get the handlers
 	listHandlers := bpsock.handlers
 
-	//send cancel request
+	// Send cancel request
 	err := SendData(nil, tag, id, bpsock.socket, bpsock.dmtu)
 	if err != nil {
 		return err
 	}
 
-	//check if the tag is in the list of handlers
+	// Check if the tag is in the list of handlers
 	for i := 0; i < len(listHandlers); i++ {
 
-		//if the tag is in the list of handlers
+		// Remove Tag if is in the list of handlers
 		if listHandlers[i].Tag().Name() == tag.Name() {
 			//remove data from the handler after the action is executed
 			defer listHandlers[i].RemoveData(id)
