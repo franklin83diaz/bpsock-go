@@ -88,6 +88,48 @@ func (bpsock *BpSock) Close() {
 	bpsock.socket.Close()
 }
 
+// Request
+func (bpsock *BpSock) Req(tag Tag8, data []byte, actionFunc ActionFunc) {
+	//create a new handler
+	handler := NewReqHandler(tag, actionFunc)
+	//add the handler to the list
+	bpsock.AddHandler(Handler(&handler))
+
+	//icrement channel count
+	mutex.Lock()
+	bpsock.id_chan++
+	mutex.Unlock()
+
+	//send request
+	SendData(data, handler.Tag(), bpsock.id_chan, bpsock.socket, bpsock.dmtu)
+
+}
+
+// Cancel the reqHandler
+func (bpsock *BpSock) CancelReq(tag Tag16, id int) error {
+	//get the handlers
+	listHandlers := bpsock.handlers
+
+	//send cancel request
+	err := SendData(nil, tag, id, bpsock.socket, bpsock.dmtu)
+	if err != nil {
+		return err
+	}
+
+	//check if the tag is in the list of handlers
+	for i := 0; i < len(listHandlers); i++ {
+
+		//if the tag is in the list of handlers
+		if listHandlers[i].Tag().Name() == tag.Name() {
+			//remove data from the handler after the action is executed
+			defer listHandlers[i].RemoveData(id)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("the tag %s is not in the list", tag.Name())
+}
+
 // Add a handler to the BpSock object
 func (bpsock *BpSock) AddHandler(handler Handler) error {
 	//check if the handler tag is already in the list
@@ -104,6 +146,19 @@ func (bpsock *BpSock) AddHandler(handler Handler) error {
 // Get list of handlers
 func (bpsock *BpSock) GetHandlers() []Handler {
 	return bpsock.handlers
+}
+
+// Remove a handler from the BpSock object
+func (bpsock *BpSock) RemoveHandler(tag Tag16) error {
+	//check if the handler tag is already in the list
+	for i := 0; i < len(bpsock.handlers); i++ {
+		if bpsock.handlers[i].Tag().Name() == tag.Name() {
+			bpsock.handlers = append(bpsock.handlers[:i], bpsock.handlers[i+1:]...)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("the tag %s is not in the list", tag.Name())
 }
 
 func (bpsock *BpSock) received() {

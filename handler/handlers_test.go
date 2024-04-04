@@ -34,8 +34,8 @@ func TestHookHandler_New(t *testing.T) {
 	reqHandler := NewReqHandler(NewTag8("tag5"), actionFunc)
 	var handler2 Handler = &reqHandler
 
-	if handler2.Tag().Name()[8:] != "tag5" {
-		t.Errorf("Expected tag to be 'tag5', got %s", reqHandler.Tag().Name()[8:])
+	if handler2.Tag().Name()[7:] != "tag5" {
+		t.Errorf("Expected tag to be 'tag5', got %s", reqHandler.Tag().Name()[7:])
 	}
 
 }
@@ -48,8 +48,8 @@ func TestNewReqHandler(t *testing.T) {
 		want int
 	}{
 		// test cases.
-		{"TestNewReqHandler", "tag5", 12},
-		{"TestNewReqHandler", "tag12345", 16},
+		{"TestNewReqHandler", "tag5", 11},
+		{"TestNewReqHandler", "tag12345", 15},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

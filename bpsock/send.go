@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-func SendData(data []byte, tag Tag16, id_chan int, socket net.Conn, dmtu int) error {
+func SendData(data []byte, tag Tag16, id_chan int, socket net.Conn, dmtu int, typeSend ...int) error {
 	/// 22 bytes for the header of Unit (id, tag, sizeData)
 
 	// id_chan 2 bytes
@@ -17,6 +17,8 @@ func SendData(data []byte, tag Tag16, id_chan int, socket net.Conn, dmtu int) er
 
 	// tag 16 bytes
 	tagName := tag.Name()
+	// TODO: typeSend to Tag
+
 	bytesTag := make([]byte, 16)
 	copy(bytesTag, []byte(tagName))
 

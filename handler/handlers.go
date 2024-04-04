@@ -58,21 +58,20 @@ func NewHookHandler(tag Tag16, actionFunc ActionFunc) HookHandler {
 type ReqHandler struct {
 	tag        Tag16
 	actionFunc ActionFunc
-	cancel     chan string
 	data       map[int][]byte
 }
 
 func NewReqHandler(tag Tag8, actionFunc ActionFunc) ReqHandler {
 
-	//Generate a tag ephemera starting with 1
+	//Generate a tag ephemera
 	subTag := utils.AlfanumRandom(7)
-	ephemeraTag16 := NewTag16Eph("1" + subTag + tag.Name())
+	ephemeraTag16 := NewTag16Eph(subTag + tag.Name())
 
 	return ReqHandler{
 		tag:        ephemeraTag16,
 		actionFunc: actionFunc,
-		cancel:     make(chan string),
-		data:       make(map[int][]byte),
+
+		data: make(map[int][]byte),
 	}
 }
 
@@ -107,12 +106,11 @@ func (h *ReqHandler) RemoveData(i int) {
 	delete(h.data, i)
 }
 
-// Cancel
-func (h *ReqHandler) Cancel() {
-	//TODO: Implement Cancel
-	h.cancel <- "cancel"
-}
-
 // ///////////////////////////////////////////////////////////////////////////
-//ReqPoint
-//TODO: Implement ReqPoint
+// ReqPoint
+type ReqPoint struct {
+	tag        Tag16
+	actionFunc ActionFunc
+	Cancel     chan string
+	data       map[int][]byte
+}
