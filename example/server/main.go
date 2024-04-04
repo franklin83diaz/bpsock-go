@@ -34,20 +34,28 @@ func main() {
 		// Create a new BpSock object
 		bpsock := NewBpSock(socket, 100)
 
-		// Create a new tag
-		tagLogin := NewTag16("Login")
-
-		actionLogin := func(h Handler, tagName string, i int) {
-			fmt.Println("Action Login")
-			//fmt.Println("tag: ", tagName)
+		// Create print Handler
+		tagPrint := NewTag16("print")
+		actionPrint := func(h Handler, tagName string, i int) {
+			fmt.Println("Action Print")
 			s := string(h.Data()[i])
 			fmt.Println(len(h.Data()))
 			fmt.Println("data: ", s)
+		}
+		print := NewHookHandler(tagPrint, actionPrint)
+		bpsock.AddHandler(&print)
+
+		// Create Login Handler
+		tagLogin := NewTag16("Login")
+		actionLogin := func(h Handler, tagName string, i int) {
+			fmt.Println("process login")
+			//fmt.Println("tag: ", tagName)
+			s := string(h.Data()[i])
+			resp := NewTag16Eph("3" + tagName)
+			bpsock.Send([]byte("login ok"+s), resp)
 
 		}
-
 		login := NewHookHandler(tagLogin, actionLogin)
-
 		bpsock.AddHandler(&login)
 
 	}

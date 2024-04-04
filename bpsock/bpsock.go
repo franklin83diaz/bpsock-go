@@ -153,7 +153,15 @@ func (bpsock *BpSock) received() {
 
 		//get the handlers
 		listHandlers := bpsock.handlers
-
+		tagNameOrig := ""
+		//check if is request
+		if tagName[0] == '1' {
+			tagNameOrig = tagName[1:]
+			tagName = tagName[8:]
+		}
+		if tagName[0] == '3' {
+			tagName = tagName[1:]
+		}
 		//check if the tag is in the list of handlers
 		for i := 0; i < len(listHandlers); i++ {
 
@@ -164,13 +172,25 @@ func (bpsock *BpSock) received() {
 				if sizeData == 0 {
 					action := listHandlers[i].ActionFunc()
 
-					go func() {
-						//remove data from the handler after the action is executed
-						defer listHandlers[i].RemoveData(idChan)
-						action(listHandlers[i], tagName, idChan)
-					}()
+					//if is request
+					if tagNameOrig != "" {
 
-					//just one handler per tag, no need to continue
+						go func() {
+							//remove data from the handler after the action is executed
+							defer listHandlers[i].RemoveData(idChan)
+							action(listHandlers[i], tagNameOrig, idChan)
+						}()
+
+					} else { //else is a async
+
+						go func() {
+							//remove data from the handler after the action is executed
+							defer listHandlers[i].RemoveData(idChan)
+							action(listHandlers[i], tagName, idChan)
+						}()
+
+					}
+
 					break
 				}
 

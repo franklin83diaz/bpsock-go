@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "debug",
            // "program": "${fileDirname}"
-            "program": "${workspaceFolder}/example/server/main.go"
+            "program": "${workspaceFolder}/example/client/main.go"
         }
     ]
 }
