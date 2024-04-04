@@ -53,32 +53,6 @@ func NewBpSock(socket net.Conn, dmtu ...int) *BpSock {
 
 }
 
-// / Send data
-// data: the data to send
-// tag: the tag to use
-// return: error
-//
-// use
-// ```
-// go func() {
-// ch <- bpsock.Send(data, tag)
-// }()
-// ```
-// to send data
-func (bpsock *BpSock) Send(data []byte, tag Tag16) error {
-
-	//reset channel if it is 65535
-	if bpsock.id_chan == 65535 {
-		bpsock.id_chan = 0
-	}
-	//icrement channel count
-	mutex.Lock()
-	bpsock.id_chan++
-	mutex.Unlock()
-
-	return SendData(data, tag, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
-}
-
 // Close the BpSock
 // this will close the socket
 // and stop the received function
@@ -86,48 +60,6 @@ func (bpsock *BpSock) Close() {
 	//Close the socket
 	//when the socket is closed, the received function will stop
 	bpsock.socket.Close()
-}
-
-// Request
-func (bpsock *BpSock) Req(tag Tag8, data []byte, actionFunc ActionFunc) {
-	//create a new handler
-	handler := NewReqHandler(tag, actionFunc)
-	//add the handler to the list
-	bpsock.AddHandler(Handler(&handler))
-
-	//icrement channel count
-	mutex.Lock()
-	bpsock.id_chan++
-	mutex.Unlock()
-
-	//send request
-	SendData(data, handler.Tag(), bpsock.id_chan, bpsock.socket, bpsock.dmtu)
-
-}
-
-// Cancel the reqHandler
-func (bpsock *BpSock) CancelReq(tag Tag16, id int) error {
-	//get the handlers
-	listHandlers := bpsock.handlers
-
-	//send cancel request
-	err := SendData(nil, tag, id, bpsock.socket, bpsock.dmtu)
-	if err != nil {
-		return err
-	}
-
-	//check if the tag is in the list of handlers
-	for i := 0; i < len(listHandlers); i++ {
-
-		//if the tag is in the list of handlers
-		if listHandlers[i].Tag().Name() == tag.Name() {
-			//remove data from the handler after the action is executed
-			defer listHandlers[i].RemoveData(id)
-			return nil
-		}
-	}
-
-	return fmt.Errorf("the tag %s is not in the list", tag.Name())
 }
 
 // Add a handler to the BpSock object
