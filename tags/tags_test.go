@@ -7,24 +7,33 @@ import (
 )
 
 func TestNewTag16(t *testing.T) {
-	type args struct {
-		s string
-	}
+
 	tests := []struct {
 		name string
-		args args
+		args string
 		want Tag16
 	}{
 		// test cases.
-		{"TestNewTag16", args{"TestNewTag16"}, NewTag16("TestNewTag16")},
-		{"TestNewTag16", args{"1234567890123456"}, NewTag16("1234567890123456")},
+		{"TestNewTag16", "TestNewTag16", NewTag16("TestNewTag16")},
+		{"TestNewTag16", "a234567890123456", NewTag16("a234567890123456")},
+		{"TestNewTag16", "1234567890123456", NewTag16("aa")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.args == "1234567890123456" {
+				defer func() {
+					if r := recover(); r == nil {
+						t.Errorf("The code did not panic")
+					}
+				}()
+				NewTag16(tt.args)
+				return
+			}
 
-			if got := NewTag16(tt.args.s); !reflect.DeepEqual(got, tt.want) {
+			if got := NewTag16(tt.args); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewTag16() = %v, want %v", got, tt.want)
 			}
+
 		})
 	}
 }
