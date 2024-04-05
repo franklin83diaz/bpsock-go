@@ -13,7 +13,11 @@ func (bpsock *BpSock) received() {
 	var idChan int
 	var tagName string
 	var sizeData int
+	//get the handlers
+	listHandlers := bpsock.handlers
 	for {
+		// TODO: resolve the error
+		fmt.Println(":::" + string(listHandlers[0].Data()[idChan]))
 		// Read data
 		bytesRead, err := bpsock.socket.Read(buffer[start:end])
 
@@ -63,8 +67,6 @@ func (bpsock *BpSock) received() {
 		//data
 		data := buffer[22 : sizeData+22]
 
-		//get the handlers
-		listHandlers := bpsock.handlers
 		tagNameOrig := ""
 		//check if is request
 		if tagName[0] == '1' {

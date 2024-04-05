@@ -30,12 +30,15 @@ func (h *HookHandler) Data() map[int][]byte {
 
 // AddData
 func (h *HookHandler) AddData(i int, b []byte) {
+
 	currentData := h.data[i]
+
 	if currentData != nil {
 		h.data[i] = append(currentData, b...)
 		return
 	}
 	h.data[i] = b
+
 }
 
 // RemoveData
@@ -114,3 +117,44 @@ type ReqPoint struct {
 	Cancel     chan string
 	data       map[int][]byte
 }
+
+func NewReqPoint(tag Tag16, actionFunc ActionFunc) ReqPoint {
+	return ReqPoint{
+		tag:        tag,
+		actionFunc: actionFunc,
+		Cancel:     make(chan string),
+		data:       make(map[int][]byte),
+	}
+}
+
+// tag
+func (h *ReqPoint) Tag() Tag16 {
+	return h.tag
+}
+
+// ActionFunc
+func (h *ReqPoint) ActionFunc() ActionFunc {
+	return h.actionFunc
+}
+
+// Data
+func (h *ReqPoint) Data() map[int][]byte {
+	return h.data
+}
+
+// AddData
+func (h *ReqPoint) AddData(i int, b []byte) {
+	currentData := h.data[i]
+	if currentData != nil {
+		h.data[i] = append(currentData, b...)
+		return
+	}
+	h.data[i] = b
+}
+
+// RemoveData
+func (h *ReqPoint) RemoveData(i int) {
+	delete(h.data, i)
+}
+
+// ///////////////////////////////////////////////////////////////////////////

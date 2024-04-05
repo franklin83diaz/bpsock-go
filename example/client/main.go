@@ -8,7 +8,7 @@ import (
 	//lint:ignore ST1001 import tags
 	. "bpsock-go/tags"
 	//lint:ignore ST1001 import handler
-	. "bpsock-go/handler"
+	//. "bpsock-go/handler"
 	"fmt"
 	"net"
 )
@@ -33,14 +33,14 @@ func main() {
 	//Create a new tag
 	tag := NewTag16("print")
 
-	bpsock.Send([]byte("1234567890 hola esto es un prueba de un string de mas de 100 runner espero haber escrito lo suficiente"), tag)
+	bpsock.Send([]byte("hola hh1234567890 hola esto es un prueba de un string de mas de 100 runner espero haber escrito lo suficiente"), tag)
 
 	time.Sleep(1 * time.Second)
 
 	//send request
-	bpsock.Req(NewTag8("Login"), []byte(`{"login": "pedro"}`), func(h Handler, tagName string, i int) {
-		fmt.Println(" Login OK ")
+	// bpsock.Req(NewTag8("Login"), []byte(`{"login": "pedro"}`), func(h Handler, tagName string, i int) {
+	// 	fmt.Println(" Login OK ")
 
-	})
+	// })
 	time.Sleep(600 * time.Second)
 }
