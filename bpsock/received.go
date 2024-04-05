@@ -13,8 +13,7 @@ func (bpsock *BpSock) received() {
 	var idChan int
 	var tagName string
 	var sizeData int
-	//get the handlers
-	listHandlers := bpsock.handlers
+
 	for {
 
 		// Read data
@@ -73,9 +72,13 @@ func (bpsock *BpSock) received() {
 			tagNameOrig = tagName[1:]
 			tagName = tagName[8:]
 		}
-		if tagName[0] == '3' {
+		if tagName[0] == '2' {
 			tagName = tagName[1:]
 		}
+
+		//get the handlers
+		listHandlers := bpsock.handlers
+
 		//check if the tag is in the list of handlers
 		for i := 0; i < len(listHandlers); i++ {
 

@@ -48,13 +48,13 @@ func main() {
 		tagLogin := NewTag8("Login")
 		actionLogin := func(h Handler, tagName string, i int) {
 			fmt.Println("process login")
-			fmt.Println("dataLogin: ", h.Data()[i])
-			s := string(h.Data()[i])
+			fmt.Println("dataLogin: ", string(h.Data()[i]))
+			//s := string(h.Data()[i])
 
-			bpsock.SendResp([]byte("login ok"+s), tagName)
+			bpsock.SendResp([]byte(`"login": "ok"`), tagName)
 
 		}
-		login := NewReqHandler(tagLogin, actionLogin)
+		login := NewReqPoint(tagLogin, actionLogin)
 		bpsock.AddHandler(&login)
 
 	}

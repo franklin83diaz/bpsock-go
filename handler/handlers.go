@@ -73,8 +73,7 @@ func NewReqHandler(tag Tag8, actionFunc ActionFunc) ReqHandler {
 	return ReqHandler{
 		tag:        ephemeraTag16,
 		actionFunc: actionFunc,
-
-		data: make(map[int][]byte),
+		data:       make(map[int][]byte),
 	}
 }
 
@@ -118,9 +117,10 @@ type ReqPoint struct {
 	data       map[int][]byte
 }
 
-func NewReqPoint(tag Tag16, actionFunc ActionFunc) ReqPoint {
+func NewReqPoint(tag Tag8, actionFunc ActionFunc) ReqPoint {
+	upTag := NewTag16Eph(tag.Name())
 	return ReqPoint{
-		tag:        tag,
+		tag:        upTag,
 		actionFunc: actionFunc,
 		Cancel:     make(chan string),
 		data:       make(map[int][]byte),

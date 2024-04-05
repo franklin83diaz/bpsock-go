@@ -47,7 +47,8 @@ func (bpsock *BpSock) SendResp(data []byte, tagName string) error {
 	bpsock.id_chan++
 	mutex.Unlock()
 
-	tagResp := NewTag16Eph("3" + tagName)
+	tagResp := NewTag16(tagName)
 
-	return SendData(data, tagResp, bpsock.id_chan, bpsock.socket, bpsock.dmtu)
+	// Send response type 2
+	return SendData(data, tagResp, bpsock.id_chan, bpsock.socket, bpsock.dmtu, 2)
 }
