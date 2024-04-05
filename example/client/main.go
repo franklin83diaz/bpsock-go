@@ -33,7 +33,7 @@ func main() {
 	//Create a new tag
 	tag := NewTag16("print")
 
-	bpsock.Send([]byte("hola hh1234567890 hola esto es un prueba de un string de mas de 100 runner espero haber escrito lo suficiente"), tag)
+	bpsock.Send([]byte("hola hh1234567890 hola esto es un prueba de un string de mas de 100 runner espero haber escrito lo suficiente por segunda vez hola hh1234567890 hola esto es un prueba de un string de mas de 100 runner espero haber escrito lo suficiente listo."), tag)
 
 	time.Sleep(1 * time.Second)
 

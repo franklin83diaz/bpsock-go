@@ -16,8 +16,7 @@ func (bpsock *BpSock) received() {
 	//get the handlers
 	listHandlers := bpsock.handlers
 	for {
-		// TODO: resolve the error
-		fmt.Println(":::" + string(listHandlers[0].Data()[idChan]))
+
 		// Read data
 		bytesRead, err := bpsock.socket.Read(buffer[start:end])
 
@@ -65,7 +64,8 @@ func (bpsock *BpSock) received() {
 		//if is end channel
 
 		//data
-		data := buffer[22 : sizeData+22]
+		data := make([]byte, len(buffer[22:sizeData+22]))
+		copy(data, buffer[22:sizeData+22])
 
 		tagNameOrig := ""
 		//check if is request
