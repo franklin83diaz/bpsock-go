@@ -38,12 +38,13 @@ func main() {
 	time.Sleep(1 * time.Second)
 
 	//send request
-	bpsock.Req(NewTag8("Login"), []byte(`{"login": "pedro"}`), func(h Handler, tagName string, i int) {
+	tag, id := bpsock.Req(NewTag8("Login"), []byte(`{"login": "pedro"}`), func(h Handler, tagName string, i int) {
 		fmt.Println(" Login OK ")
-
 		//remove handler after the action is executed
 		bpsock.RemoveHandler(tagName)
-
 	})
-	time.Sleep(2 * time.Second)
+	time.Sleep(3 * time.Second)
+	fmt.Println(tag.Name(), id)
+	//bpsock.CancelReq(tag, id)
+	time.Sleep(10 * time.Second)
 }

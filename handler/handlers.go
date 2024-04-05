@@ -111,15 +111,15 @@ func (h *ReqHandler) RemoveData(i int) {
 
 // ///////////////////////////////////////////////////////////////////////////
 // ReqPoint
-type ReqPoint struct {
+type ReqPointHandler struct {
 	tag        Tag16
 	actionFunc ActionFunc
 	data       map[int][]byte
 }
 
-func NewReqPoint(tag Tag8, actionFunc ActionFunc) ReqPoint {
+func NewReqPoint(tag Tag8, actionFunc ActionFunc) ReqPointHandler {
 	upTag := NewTag16Eph(tag.Name())
-	return ReqPoint{
+	return ReqPointHandler{
 		tag:        upTag,
 		actionFunc: actionFunc,
 		data:       make(map[int][]byte),
@@ -127,22 +127,22 @@ func NewReqPoint(tag Tag8, actionFunc ActionFunc) ReqPoint {
 }
 
 // tag
-func (h *ReqPoint) Tag() Tag16 {
+func (h *ReqPointHandler) Tag() Tag16 {
 	return h.tag
 }
 
 // ActionFunc
-func (h *ReqPoint) ActionFunc() ActionFunc {
+func (h *ReqPointHandler) ActionFunc() ActionFunc {
 	return h.actionFunc
 }
 
 // Data
-func (h *ReqPoint) Data() map[int][]byte {
+func (h *ReqPointHandler) Data() map[int][]byte {
 	return h.data
 }
 
 // AddData
-func (h *ReqPoint) AddData(i int, b []byte) {
+func (h *ReqPointHandler) AddData(i int, b []byte) {
 	currentData := h.data[i]
 	if currentData != nil {
 		h.data[i] = append(currentData, b...)
@@ -152,7 +152,7 @@ func (h *ReqPoint) AddData(i int, b []byte) {
 }
 
 // RemoveData
-func (h *ReqPoint) RemoveData(i int) {
+func (h *ReqPointHandler) RemoveData(i int) {
 	delete(h.data, i)
 }
 

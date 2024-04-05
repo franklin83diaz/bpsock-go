@@ -11,7 +11,9 @@ import (
 )
 
 // Request
-func (bpsock *BpSock) Req(tag Tag8, data []byte, actionFunc ActionFunc) {
+// This function sends a request to the server
+// Returns the tag and the id of the channel
+func (bpsock *BpSock) Req(tag Tag8, data []byte, actionFunc ActionFunc) (Tag16, int) {
 	// Create a new handler
 	handler := NewReqHandler(tag, actionFunc)
 	//add the handler to the list
@@ -25,29 +27,27 @@ func (bpsock *BpSock) Req(tag Tag8, data []byte, actionFunc ActionFunc) {
 	// Send request type 1
 	SendData(data, handler.Tag(), bpsock.id_chan, bpsock.socket, bpsock.dmtu, 1)
 
+	return handler.Tag(), bpsock.id_chan
 }
 
 // Cancel the reqHandler
-func (bpsock *BpSock) CancelReq(tag Tag16, id int) error {
+func (bpsock *BpSock) CancelReq(tag Tag16, id_chan int) error {
 	//get the handlers
 	listHandlers := bpsock.handlers
 
-	// Send cancel request
-	err := SendData(nil, tag, id, bpsock.socket, bpsock.dmtu)
+	// Send cancel request type 3
+	err := SendData(nil, tag, id_chan, bpsock.socket, bpsock.dmtu, 3)
 	if err != nil {
 		return err
 	}
 
-	// Check if the tag is in the list of handlers
+	//remove handler
 	for i := 0; i < len(listHandlers); i++ {
-
-		// Remove Tag if is in the list of handlers
 		if listHandlers[i].Tag().Name() == tag.Name() {
-			//remove data from the handler after the action is executed
-			defer listHandlers[i].RemoveData(id)
+			bpsock.RemoveHandler(tag.Name())
 			return nil
 		}
 	}
 
-	return fmt.Errorf("the tag %s is not in the list", tag.Name())
+	return fmt.Errorf("handler not found")
 }

@@ -3,6 +3,8 @@ package main
 import (
 	//lint:ignore ST1001 import bpsock
 	. "bpsock-go/bpsock"
+	"time"
+
 	//lint:ignore ST1001 import handler
 	. "bpsock-go/handler"
 	//lint:ignore ST1001 import tags
@@ -46,11 +48,21 @@ func main() {
 
 		// Create Login Handler
 		tagLogin := NewTag8("Login")
-		actionLogin := func(h Handler, tagName string, i int) {
+		actionLogin := func(h Handler, tagName string, id int) {
+			time.Sleep(1 * time.Second)
+			fmt.Println("dataLogin: ", string(h.Data()[id]))
+			fmt.Print("process login")
+			for x := 0; x < 5; x++ {
+				fmt.Print(".")
 
-			fmt.Println("process login")
-			fmt.Println("dataLogin: ", string(h.Data()[i]))
-			//s := string(h.Data()[i])
+				//If the data is nil, is canceled
+				if h.Data()[id] == nil {
+					fmt.Println()
+					fmt.Println("Cancel login")
+					return
+				}
+				time.Sleep(1 * time.Second)
+			}
 
 			bpsock.SendResp([]byte(`"login": "ok"`), tagName)
 

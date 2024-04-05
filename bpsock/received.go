@@ -67,13 +67,24 @@ func (bpsock *BpSock) received() {
 		copy(data, buffer[22:sizeData+22])
 
 		tagNameOrig := ""
+		typeConnection := 0
 		//check if is request
 		if tagName[0] == '1' {
+			typeConnection = 1
 			tagNameOrig = tagName[1:]
 			tagName = tagName[8:]
 		}
+
+		//check if response
 		if tagName[0] == '2' {
+			typeConnection = 2
 			tagName = tagName[1:]
+		}
+
+		//check if is cancel
+		if tagName[0] == '3' {
+			typeConnection = 3
+			tagName = tagName[8:]
 		}
 
 		//get the handlers
@@ -89,16 +100,8 @@ func (bpsock *BpSock) received() {
 				if sizeData == 0 {
 					action := listHandlers[i].ActionFunc()
 
-					//if is request
-					if tagNameOrig != "" {
-
-						go func() {
-							//remove data from the handler after the action is executed
-							defer listHandlers[i].RemoveData(idChan)
-							action(listHandlers[i], tagNameOrig, idChan)
-						}()
-
-					} else { //else is a async
+					//if is async
+					if typeConnection == 0 {
 
 						go func() {
 							//remove data from the handler after the action is executed
@@ -106,6 +109,21 @@ func (bpsock *BpSock) received() {
 							action(listHandlers[i], tagName, idChan)
 						}()
 
+					}
+
+					//if is request or response
+					if typeConnection == 1 || typeConnection == 2 {
+
+						go func() {
+							//remove data from the handler after the action is executed
+							defer listHandlers[i].RemoveData(idChan)
+							action(listHandlers[i], tagNameOrig, idChan)
+						}()
+
+					}
+					//if is cancel
+					if typeConnection == 3 {
+						listHandlers[i].RemoveData(idChan)
 					}
 
 					break
