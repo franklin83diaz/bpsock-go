@@ -2,6 +2,7 @@ package handler
 
 import (
 	//lint:ignore ST1001 import tags
+
 	. "bpsock-go/tags"
 	"bpsock-go/utils"
 )
@@ -113,7 +114,6 @@ func (h *ReqHandler) RemoveData(i int) {
 type ReqPoint struct {
 	tag        Tag16
 	actionFunc ActionFunc
-	Cancel     chan string
 	data       map[int][]byte
 }
 
@@ -122,7 +122,6 @@ func NewReqPoint(tag Tag8, actionFunc ActionFunc) ReqPoint {
 	return ReqPoint{
 		tag:        upTag,
 		actionFunc: actionFunc,
-		Cancel:     make(chan string),
 		data:       make(map[int][]byte),
 	}
 }

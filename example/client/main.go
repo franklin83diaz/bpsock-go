@@ -41,6 +41,9 @@ func main() {
 	bpsock.Req(NewTag8("Login"), []byte(`{"login": "pedro"}`), func(h Handler, tagName string, i int) {
 		fmt.Println(" Login OK ")
 
+		//remove handler after the action is executed
+		bpsock.RemoveHandler(tagName)
+
 	})
-	time.Sleep(600 * time.Second)
+	time.Sleep(2 * time.Second)
 }

@@ -47,6 +47,7 @@ func main() {
 		// Create Login Handler
 		tagLogin := NewTag8("Login")
 		actionLogin := func(h Handler, tagName string, i int) {
+
 			fmt.Println("process login")
 			fmt.Println("dataLogin: ", string(h.Data()[i]))
 			//s := string(h.Data()[i])

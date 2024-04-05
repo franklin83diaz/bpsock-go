@@ -3,8 +3,6 @@ package bpsock
 import (
 	//lint:ignore ST1001 import handler
 	. "bpsock-go/handler"
-	//lint:ignore ST1001 import tags
-	. "bpsock-go/tags"
 	"fmt"
 	"net"
 	"sync"
@@ -79,14 +77,14 @@ func (bpsock *BpSock) GetHandlers() []Handler {
 }
 
 // Remove a handler from the BpSock object
-func (bpsock *BpSock) RemoveHandler(tag Tag16) error {
+func (bpsock *BpSock) RemoveHandler(tagName string) error {
 	//check if the handler tag is already in the list
 	for i := 0; i < len(bpsock.handlers); i++ {
-		if bpsock.handlers[i].Tag().Name() == tag.Name() {
+		if bpsock.handlers[i].Tag().Name() == tagName {
 			bpsock.handlers = append(bpsock.handlers[:i], bpsock.handlers[i+1:]...)
 			return nil
 		}
 	}
 
-	return fmt.Errorf("the tag %s is not in the list", tag.Name())
+	return fmt.Errorf("the tag %s is not in the list", tagName)
 }
